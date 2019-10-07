@@ -2,22 +2,51 @@ require('dotenv').config();
 const router = require('express').Router();
 const db = require('../models');
 const jwt = require('jsonwebtoken');
+const passport = require("../config/ppConfig");
+
+router.get("/google", passport.authenticate("google"));
+
+router.get('/google/callback', 
+	passport.authenticate('google', { failureRedirect: '/auth/google' }), 
+	(req,res) => {
+		res.send("GOOGLE AUTH RESPONSE:" + req.body);
+})
+
 
 router.post('/login', (req,res) => {
-	db.User.findOne({ email: req.body.email })
+//	console.log('at login route', req.body);
+	let loginName = req.body.w3.ig;
+	let loginEmail = req.body.w3.U3;
+	console.log('loginEmail:', loginEmail);
+	db.User.findOneAndUpdate({
+		email: loginEmail
+		},
+		{
+			$setOnInsert: {
+				name: loginName,
+				email: loginEmail,
+				notepad: ''
+			}
+		},
+		{
+			returnOriginal: false,
+			upsert: true
+		}
+	)
 	.then(user => {
 		// Make sure we have a user and the user has a password
-		if (!user || !user.password) {
+		if (!user) {
 			return res.status(404).send({ message: 'User not found' });
 		}
 
-		// Validate the password
-		if (!user.isAuthenticated(req.body.password)) {
-			// Wrong password
-			return res.status(406).send({ message: 'Not acceptable: Invalid creds' });
-		}
+		// // Validate the password
+		// if (!user.isAuthenticated(req.body.password)) {
+		// 	// Wrong password
+		// 	return res.status(406).send({ message: 'Not acceptable: Invalid creds' });
+		// }
 
 		// Valid user: Assign a token
+		console.log('ASSIGNING A USER TOKEN', user)
 		let token = jwt.sign(user.toJSON(), process.env.JWT_SECRET, {
 			expiresIn: 60 * 60 * 12
 		})
@@ -60,6 +89,8 @@ router.post('/signup', (req, res) => {
 //	res.send('STUB - auth/signup POST');
 })
 
+
+
 // NB: User must be logged in to get to this route
 router.get('/current/user', (req,res) => {
 	// The user is logged in so req.user should have data
@@ -73,6 +104,7 @@ router.get('/current/user', (req,res) => {
 	// when you update user data.
 	res.send({ user: req.user });
 })
+
 
 
 module.exports = router;
