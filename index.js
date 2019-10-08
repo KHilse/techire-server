@@ -8,7 +8,7 @@ const session = require("express-session");
 const MongoDBStore = require('connect-mongodb-session')(session);
 const flash = require('flash');
 const passport = require("./config/ppConfig");
-
+require('./controllers/documents');
 
 // Instantiate app
 const app = express();
@@ -54,8 +54,8 @@ app.use('/auth', expressJwt({
 		{ url: '/auth/signup', methods: ['POST'] }
 	]
 }),
-	require('./controllers/auth'));
-
+require('./controllers/auth'));
+app.use('/documents', require('./controllers/documents'));
 
 // GLOBAL ROUTES
 app.get('*', (req, res) => {
