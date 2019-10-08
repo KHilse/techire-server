@@ -9,12 +9,8 @@ router.get('/', (req, res) => {
         process.env.TECHIRE_GOOGLE_CLIENT_ID,
         process.env.TECHIRE_GOOGLE_CLIENT_SECRET, 
         process.env.GOOGLE_AUTH_CLIENT_REDIRECT);
-    oauth2Client.on('tokens', (tokens) => {
-        if (tokens.refresh_token) {
 
-        }
-    })
-    oauth2Client.setCredentials(req.headers['authorization']);
+    //oauth2Client.setCredentials(req.headers['authorization']);
     console.log(req.headers.authorization);
     const drive = google.drive({
         'version': 'v3',
@@ -30,20 +26,7 @@ router.get('/', (req, res) => {
     .catch(err => {
         console.log(err)
     })
-    // axios.get('https://www.googleapis.com/drive/v3/files', {
-    //     headers: {
-    //         'authorization': 'Bearer'
-    //     }
-    // })
-    // .then(response => {
-    //     return response.JSON();
-    // })
-    // .then(data => {
-    //     res.send(data);
-    // }) 
-    // .catch(err => {
-    //     console.log(err);
-    // })       
+   
 })
 
 module.exports = router;
