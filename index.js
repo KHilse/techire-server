@@ -56,6 +56,7 @@ app.use('/auth', expressJwt({
 }),
 require('./controllers/auth'));
 app.use('/documents', require('./controllers/documents'));
+app.use('/tasks', require('./controllers/tasks'));
 
 // GLOBAL ROUTES
 app.get('*', (req, res) => {

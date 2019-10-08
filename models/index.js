@@ -7,3 +7,4 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost/techire', {
 });
 
 module.exports.User = require('./user');
+module.exports.Task = require('./task');
