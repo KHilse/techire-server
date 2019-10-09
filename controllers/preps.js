@@ -11,7 +11,7 @@ router.get('/:userId', (req, res) => {
         console.log('FOUND USER', user.email);
         db.Prep.find({ userId: req.params.userId })
         .then(preps => {
-            console.log('FOUND PREPS', preps)
+            console.log('FOUND PREPS', preps.length)
             res.send(preps);
         })
         .catch(err => {

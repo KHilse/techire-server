@@ -5,7 +5,10 @@ const prepSchema = new mongoose.Schema({
     category: String,
     caption: String,
     description: String,
-    completed: Boolean
+    status: {
+        type: String,
+        enum: ['Not Started', 'In Progress', 'Completed']
+    }
 })
 
 module.exports = mongoose.model('Prep', prepSchema);
