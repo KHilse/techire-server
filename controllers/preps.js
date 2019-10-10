@@ -25,4 +25,23 @@ router.get('/:userId', (req, res) => {
     })
 })
 
+// PUT route for updating Prep item status
+router.put('/:userId/:prepsId', (req, res) => {
+    console.log('ATTEMPTING to update prep item status');
+    console.log('  userId:', req.params.userId);
+    console.log('  prepsId:', req.params.prepsId);
+    console.log('  newStatus:', req.body);
+    db.Prep.updateOne(
+        { _id: req.params.prepsId },
+        { status: req.body.status }
+    )
+    .then(result => {
+        res.send(result);
+    })
+    .catch(err => {
+        console.log("ERROR updating prep item status", err);
+    })
+})
+
+
 module.exports = router;
