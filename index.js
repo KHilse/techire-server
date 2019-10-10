@@ -58,6 +58,7 @@ require('./controllers/auth'));
 app.use('/documents', require('./controllers/documents'));
 app.use('/tasks', require('./controllers/tasks'));
 app.use('/preps', require('./controllers/preps'));
+app.use('/contacts', require('./controllers/contacts'));
 
 // GLOBAL ROUTES
 app.get('*', (req, res) => {
