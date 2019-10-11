@@ -10,6 +10,7 @@ router.get('/:userId', (req, res) => {
     db.Contact.find({
         userId: req.params.userId
     })
+    .populate('outstandingRequests')
     .then(contacts => {
         res.send(contacts);
     })
@@ -70,9 +71,14 @@ router.post('/:userId/contact/:id/newrequest', (req, res) => {
     console.log('CONTACTS POST /addrequest route');
     console.log(`params: user ${req.params.userId}, contact ${req.params.id}`);
     console.log(`body: ${req.body.type}`);
+    let reqDate = new Date();
+    let reqFDate = new Date();
+    reqFDate.setDate(reqFDate.getDate() + 3);
     db.Request.create({
         contact_id: req.params.id,
-        type: req.body.type
+        type: req.body.type,
+        date: reqDate,
+        followUpDate: reqFDate 
     })
     .then(newRequest => {
         db.Contact.updateOne( { _id: req.params.id },
@@ -80,7 +86,7 @@ router.post('/:userId/contact/:id/newrequest', (req, res) => {
                 $push: { outstandingRequests: newRequest}
             })
         .then(result => {
-            res.send(result);
+            res.send(newRequest);
         })
         .catch(err => {
             console.log('ERROR couldn\'t find contact record', err);

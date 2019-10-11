@@ -25,4 +25,15 @@ router.get('/:userId', (req, res) => {
     })
 })
 
+// POST route to create a new task
+router.post('/:userId/new', (req, res) => {
+    db.Task.create(req.body)
+    .then(result => {
+        res.send(result);
+    })
+    .catch(err => {
+        console.log('ERROR creating new task');
+    })
+})
+
 module.exports = router;
