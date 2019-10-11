@@ -14,7 +14,7 @@ const contactSchema = new mongoose.Schema({
 })
 
 const requestSchema = new mongoose.Schema({
-    contactId: mongoose.Schema.Types.ObjectId,
+    contact_id: mongoose.Schema.Types.ObjectId,
     type: String,
     date: Date,
     followUpDate: Date

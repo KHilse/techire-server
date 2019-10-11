@@ -2,6 +2,7 @@ require('dotenv').config();
 const router = require('express').Router();
 const axios = require('axios');
 const db = require('../models');
+const mongoose = require('mongoose');
 
 // GET all contacts matching the userId
 router.get('/:userId', (req, res) => {
@@ -29,6 +30,18 @@ router.post('/new', (req, res) => {
     })
 })
 
+// PUT (update) contact
+router.put('/:userId/update/:id', (req, res) => {
+    console.log('CONTACTS PUT route');
+    db.Contact.updateOne({ _id: req.params.id }, req.body)
+    .then(result => {
+        return result;
+    })
+    .catch(err => {
+        console.log('ERROR (Contacts PUT /update', err);
+    })
+})
+
 // DELETE contact
 router.delete('/:userId/delete/:id', (req, res) => {
     console.log('CONTACTS DELETE route');
@@ -51,5 +64,29 @@ router.delete('/:userId/delete/:id', (req, res) => {
         console.log('ERROR finding contact for deletion', err);
     })
 })
+
+// POST add new outstanding request to contact
+router.post('/:userId/contact/:id/newrequest', (req, res) => {
+    console.log('CONTACTS POST /addrequest route');
+    console.log(`params: user ${req.params.userId}, contact ${req.params.id}`);
+    console.log(`body: ${req.body.type}`);
+    db.Request.create({
+        contact_id: req.params.id,
+        type: req.body.type
+    })
+    .then(newRequest => {
+        db.Contact.updateOne( { _id: req.params.id },
+            {
+                $push: { outstandingRequests: newRequest}
+            })
+        .then(result => {
+            res.send(result);
+        })
+        .catch(err => {
+            console.log('ERROR couldn\'t find contact record', err);
+        })    
+    })
+})
+
 
 module.exports = router;
