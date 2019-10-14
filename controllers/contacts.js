@@ -1,12 +1,9 @@
 require('dotenv').config();
 const router = require('express').Router();
-const axios = require('axios');
 const db = require('../models');
-const mongoose = require('mongoose');
 
 // GET all contacts matching the userId
 router.get('/:userId', (req, res) => {
-    console.log(`Contacts GET / userId=`, req.params.userId );
     db.Contact.find({
         userId: req.params.userId
     })
@@ -21,7 +18,6 @@ router.get('/:userId', (req, res) => {
 
 // POST new contact
 router.post('/new', (req, res) => {
-    console.log('Contacts NEW req.body=', req.body);
     db.Contact.create(req.body)
     .then(result => {
         return result;
@@ -33,7 +29,6 @@ router.post('/new', (req, res) => {
 
 // PUT (update) contact
 router.put('/:userId/update/:id', (req, res) => {
-    console.log('CONTACTS PUT route');
     db.Contact.updateOne({ _id: req.params.id }, req.body)
     .then(result => {
         return result;
@@ -45,10 +40,8 @@ router.put('/:userId/update/:id', (req, res) => {
 
 // DELETE contact
 router.delete('/:userId/delete/:id', (req, res) => {
-    console.log('CONTACTS DELETE route');
     db.Contact.findOne({ _id: req.params.id })
     .then(result => {
-        console.log(`result=${result.userId}, params=${req.params.userId}`);
         if (result.userId === req.params.userId) {
             db.Contact.deleteOne({ _id: req.params.id})
             .then(result => {
@@ -68,9 +61,6 @@ router.delete('/:userId/delete/:id', (req, res) => {
 
 // POST add new outstanding request to contact
 router.post('/:userId/contact/:id/newrequest', (req, res) => {
-    console.log('CONTACTS POST /addrequest route');
-    console.log(`params: user ${req.params.userId}, contact ${req.params.id}`);
-    console.log(`body: ${req.body.type}`);
     let reqDate = new Date();
     let reqFDate = new Date();
     reqFDate.setDate(reqFDate.getDate() + 3);
@@ -93,6 +83,5 @@ router.post('/:userId/contact/:id/newrequest', (req, res) => {
         })    
     })
 })
-
 
 module.exports = router;

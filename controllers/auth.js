@@ -13,16 +13,12 @@ router.get('/google/callback',
 		res.send("GOOGLE AUTH RESPONSE:" + req.body);
 })
 
-
 router.post('/login', (req,res) => {
-	console.log('at login route', req.body);
 	let loginName = req.body.w3.ig;
 	let loginEmail = req.body.w3.U3;
-	console.log('loginEmail:', loginEmail);
 
 	db.User.findOne({ email: loginEmail })
 	.then(user => {
-		console.log('USER FOUND OR CREATED', user);
 		// Make sure we have a user
 		if (!user) {
 			// Create new user in server db
@@ -34,7 +30,6 @@ router.post('/login', (req,res) => {
 			.then(user => {
 				db.Prep.find({ userId: user._id })
 				.then(prepTasks => {
-					console.log('PREPTASKS', prepTasks);
 					if (prepTasks.length == 0) {
 						initPrepTasks(user._id);
 					}	
@@ -51,7 +46,6 @@ router.post('/login', (req,res) => {
 			})
 		} else {
 			// Valid existing user: Assign a token
-			console.log('ASSIGNING A USER TOKEN', user)
 			let token = assignToken(user);
 			res.send({ token });
 		}
@@ -68,39 +62,6 @@ function assignToken(user) {
 	})
 }
 
-// router.post('/signup', (req, res) => {
-// 	db.User.findOne({
-// 		email: req.body.email
-// 	})
-// 	.then(user => {
-// 		// if user exists, don't let them set up a dupe account
-// 		if (user) {
-// 			return res.status(409).send({ message: 'Email address already in use on this site' });
-// 		}
-
-// 		// User doesn't exist, so create the db entry
-// 		db.User.create(req.body)
-// 		.then(newUser => {
-// 			// Assign a token to the new user
-// 			let token = jwt.sign(newUser.toJSON(), process.env.JWT_SECRET, {
-// 				expiresIn: 60 * 60 * 12 // Units in seconds
-// 			});
-// 			res.send({token});
-// 		})
-// 		.catch(err => {
-// 			console.log("ERROR creating new user record", err);
-// 			res.status(500).send({ message: 'Couldn\'t create a new user record' });
-// 		})
-// 	})
-// 	.catch(err => {
-// 		console.log('ERROR: existing user found in signup POST', err);
-// 		res.status(503).send({ message: 'Something went wrong with the db' });
-// 	})
-// //	res.send('STUB - auth/signup POST');
-// })
-
-
-
 // NB: User must be logged in to get to this route
 router.get('/current/user', (req,res) => {
 	// The user is logged in so req.user should have data
@@ -115,19 +76,15 @@ router.get('/current/user', (req,res) => {
 	res.send({ user: req.user });
 })
 
-
+/** If a new user is created, prepopulate it with tasks from the /init/preptasks.js file */
 function initPrepTasks(userId) {
-	console.log('PREPTASKS count:', PREP_TASKS.length);
 	let userPrepTasks = PREP_TASKS.map(task => {
 		task.userId = userId;
 		return task;
 	})
-	console.log('USERPREPTASKS count:', userPrepTasks.length);
 	db.Prep.insertMany(userPrepTasks,
 		{ordered: true}
 	)
 }
-
-
 
 module.exports = router;

@@ -1,17 +1,13 @@
 require('dotenv').config();
 const router = require('express').Router();
-const axios = require('axios');
 const db = require('../models');
 
 // GET route for getting all preps for a specific user
 router.get('/:userId', (req, res) => {
-    // console.log('USERID:', req.params.userId);
     db.User.findOne({ _id: req.params.userId })
     .then(user => {
-        console.log('FOUND USER', user.email);
         db.Prep.find({ userId: req.params.userId })
         .then(preps => {
-            console.log('FOUND PREPS', preps.length)
             res.send(preps);
         })
         .catch(err => {
@@ -27,10 +23,6 @@ router.get('/:userId', (req, res) => {
 
 // PUT route for updating Prep item status
 router.put('/:userId/:prepsId', (req, res) => {
-    console.log('ATTEMPTING to update prep item status');
-    console.log('  userId:', req.params.userId);
-    console.log('  prepsId:', req.params.prepsId);
-    console.log('  newStatus:', req.body);
     db.Prep.updateOne(
         { _id: req.params.prepsId },
         { status: req.body.status }
@@ -42,6 +34,5 @@ router.put('/:userId/:prepsId', (req, res) => {
         console.log("ERROR updating prep item status", err);
     })
 })
-
 
 module.exports = router;
