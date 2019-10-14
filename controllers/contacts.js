@@ -20,7 +20,7 @@ router.get('/:userId', (req, res) => {
 router.post('/new', (req, res) => {
     db.Contact.create(req.body)
     .then(result => {
-        return result;
+        res.send(result);
     })
     .catch(err => {
         console.log('ERROR (Contacts POST /add):', err);
@@ -31,7 +31,7 @@ router.post('/new', (req, res) => {
 router.put('/:userId/update/:id', (req, res) => {
     db.Contact.updateOne({ _id: req.params.id }, req.body)
     .then(result => {
-        return result;
+        res.send(result);
     })
     .catch(err => {
         console.log('ERROR (Contacts PUT /update', err);
